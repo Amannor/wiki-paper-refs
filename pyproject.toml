@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "wiki-paper-refs"
+version = "0.1.0"
+description = "CLI that lists academic paper references on a Wikipedia article, with first-added and publication dates."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "Alon Mannor" }]
+keywords = ["wikipedia", "citations", "doi", "academic", "cli"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering",
+]
+dependencies = [
+  "httpx>=0.27",
+  "mwparserfromhell>=0.6.6",
+  "pydantic>=2.0",
+  "rich>=13.0",
+  "typer>=0.12",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+wiki-paper-refs = "wiki_paper_refs.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/Amannor/wiki-paper-refs"
+Issues = "https://github.com/Amannor/wiki-paper-refs/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
