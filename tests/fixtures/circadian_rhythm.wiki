@@ -1,0 +1,6 @@
+<!-- Source: https://en.wikipedia.org/wiki/Circadian_rhythm
+     Offline excerpt so tests do not fetch Wikipedia or publisher APIs. -->
+
+Reindeer news coverage (non-academic):<ref>{{Cite news | vauthors = Spilde I |title=Reinsdyr uten døgnrytme |url=http://www.forskning.no/Artikler/2005/desember/1135264557.29 |publisher=forskning.no |date=December 2005 |access-date=2007-11-24 |language=nb |archive-url=https://web.archive.org/web/20071203214441/http://www.forskning.no/Artikler/2005/desember/1135264557.29 |archive-date=2007-12-03 }}</ref>
+
+Academic paper from the same article:<ref name="Ko2006">{{cite journal | vauthors = Ko CH, Takahashi JS | title = Molecular components of the mammalian circadian clock | journal = Human Molecular Genetics | volume = 15 | issue = Spec No 2 | pages = R271–7 | date = October 2006 | pmid = 16987893 | doi = 10.1093/hmg/ddl207 }}</ref>

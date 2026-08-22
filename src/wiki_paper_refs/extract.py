@@ -98,7 +98,7 @@ def identifiers_from_template(template) -> dict[str, str]:
         if arxiv_id:
             found["arxiv_id"] = arxiv_id
     url = param(template, "url", "URL") or ""
-    if "arxiv_id" not in found:
+    if "arxiv_id" not in found and "arxiv.org" in url.lower():
         arxiv_id = normalize_arxiv_id(url)
         if arxiv_id:
             found["arxiv_id"] = arxiv_id

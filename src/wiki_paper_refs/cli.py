@@ -15,6 +15,12 @@ from wiki_paper_refs.pipeline import collect
 
 console = Console(stderr=True)
 
+NO_ACADEMIC_REFS_MESSAGE = (
+    "No academic paper references found. "
+    "This article's citations look like news, web pages, or other non-paper sources, "
+    "or they lack a DOI, PMID, PMC, or arXiv id."
+)
+
 
 def main(
     url: str = typer.Argument(..., help="URL of a Wikipedia article"),
@@ -76,6 +82,9 @@ def main(
         sys.stdout.write(rendered)
         if not rendered.endswith("\n"):
             sys.stdout.write("\n")
+    if not refs:
+        console.print(f"[yellow]{NO_ACADEMIC_REFS_MESSAGE}[/yellow]")
+        raise typer.Exit(code=2)
 
 
 def _render(payload: list[dict], fmt: str) -> str:

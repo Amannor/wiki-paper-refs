@@ -10,12 +10,55 @@ PMID_URL_RE = re.compile(
     re.IGNORECASE,
 )
 PMC_RE = re.compile(r"\bPMC(\d+)\b", re.IGNORECASE)
-ARXIV_ID_RE = re.compile(
-    r"(?:arXiv:)?((?:\d{4}\.\d{4,5})(?:v\d+)?|[a-z\-]+(?:\.[A-Z]{2})?/\d{7})(?:v\d+)?",
-    re.IGNORECASE,
+# Pre-2007 ids are archive/YYMMNNN, not arbitrary word/digit paths (e.g. /desember/1135264).
+ARXIV_ARCHIVES = frozenset(
+    {
+        "acc-phys",
+        "adap-org",
+        "alg-geom",
+        "ao-sci",
+        "astro-ph",
+        "atom-ph",
+        "bayes-an",
+        "chao-dyn",
+        "chem-ph",
+        "cmp-lg",
+        "comp-gas",
+        "cond-mat",
+        "cs",
+        "dg-ga",
+        "econ",
+        "eess",
+        "funct-an",
+        "gr-qc",
+        "hep-ex",
+        "hep-lat",
+        "hep-ph",
+        "hep-th",
+        "math",
+        "math-ph",
+        "mtrl-th",
+        "nlin",
+        "nucl-ex",
+        "nucl-th",
+        "patt-sol",
+        "physics",
+        "plasm-ph",
+        "q-alg",
+        "q-bio",
+        "q-fin",
+        "quant-ph",
+        "solv-int",
+        "stat",
+    }
 )
 ARXIV_URL_RE = re.compile(
     r"arxiv\.org/(?:abs|pdf|html)/([^\s?#]+)",
+    re.IGNORECASE,
+)
+ARXIV_NEW_ID_RE = re.compile(r"^\d{4}\.\d{4,5}(?:v\d+)?$", re.IGNORECASE)
+ARXIV_OLD_ID_RE = re.compile(
+    r"^([a-z]{1,16}(?:-[a-z]{1,16})?)(?:\.[a-z]{2,4})?/\d{7}(?:v\d+)?$",
     re.IGNORECASE,
 )
 
@@ -80,17 +123,28 @@ def normalize_doi(raw: str) -> str | None:
     return doi.lower()
 
 
+def _parse_arxiv_identifier(text: str) -> str | None:
+    candidate = unquote(text.strip()).rstrip(").,;\"'")
+    candidate = re.sub(r"\.pdf$", "", candidate, flags=re.IGNORECASE)
+    candidate = re.sub(r"^arxiv:", "", candidate, flags=re.IGNORECASE).strip()
+    if ARXIV_NEW_ID_RE.match(candidate):
+        return re.sub(r"v\d+$", "", candidate, flags=re.IGNORECASE)
+    old = ARXIV_OLD_ID_RE.match(candidate)
+    if old and old.group(1).lower() in ARXIV_ARCHIVES:
+        return re.sub(r"v\d+$", "", candidate, flags=re.IGNORECASE)
+    return None
+
+
 def normalize_arxiv_id(raw: str) -> str | None:
-    text = unquote(raw.strip()).removesuffix(".pdf")
+    if not raw or not raw.strip():
+        return None
+    text = unquote(raw.strip())
     url_match = ARXIV_URL_RE.search(text)
     if url_match:
-        text = url_match.group(1)
-    match = ARXIV_ID_RE.search(text)
-    if not match:
+        return _parse_arxiv_identifier(url_match.group(1))
+    if re.search(r"://", text) and "arxiv.org" not in text.lower():
         return None
-    arxiv_id = match.group(1).rstrip(").,;\"'")
-    arxiv_id = re.sub(r"v\d+$", "", arxiv_id, flags=re.IGNORECASE)
-    return arxiv_id
+    return _parse_arxiv_identifier(text)
 
 
 def normalize_pmid(raw: str) -> str | None:

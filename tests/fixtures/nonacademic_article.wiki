@@ -1,0 +1,4 @@
+<!-- Negative case: news and web citations only. Not fetched from a live article. -->
+
+<ref>{{cite news |title=City council votes tonight |url=https://news.example/story/123 |date=2024-05-01 |work=Local Daily}}</ref>
+<ref>{{cite web |title=About the festival |url=https://festival.example/about |access-date=2024-05-02}}</ref>

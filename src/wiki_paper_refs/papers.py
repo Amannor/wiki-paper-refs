@@ -108,10 +108,13 @@ class PaperClient:
         params = {}
         if self._mailto:
             params["mailto"] = self._mailto
-        response = self._http.get(f"https://api.crossref.org/works/{doi}", params=params)
-        if response.status_code == 404:
+        try:
+            response = self._http.get(f"https://api.crossref.org/works/{doi}", params=params)
+            if response.status_code in {400, 404}:
+                return None
+            response.raise_for_status()
+        except httpx.HTTPError:
             return None
-        response.raise_for_status()
         message = response.json().get("message") or {}
         dates = [
             _date_parts_to_str((message.get("published-online") or {}).get("date-parts")),
@@ -127,11 +130,16 @@ class PaperClient:
         }
 
     def _pubmed(self, pmid: str) -> dict | None:
-        response = self._http.get(
-            "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi",
-            params={"db": "pubmed", "id": pmid, "retmode": "json"},
-        )
-        response.raise_for_status()
+        try:
+            response = self._http.get(
+                "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi",
+                params={"db": "pubmed", "id": pmid, "retmode": "json"},
+            )
+            if response.status_code in {400, 404}:
+                return None
+            response.raise_for_status()
+        except httpx.HTTPError:
+            return None
         result = (response.json().get("result") or {}).get(pmid) or {}
         if not result:
             return None
@@ -150,12 +158,17 @@ class PaperClient:
         }
 
     def _arxiv(self, arxiv_id: str) -> dict | None:
-        response = self._http.get(
-            "https://export.arxiv.org/api/query",
-            params={"id_list": arxiv_id},
-            headers={"Accept": "application/atom+xml"},
-        )
-        response.raise_for_status()
+        try:
+            response = self._http.get(
+                "https://export.arxiv.org/api/query",
+                params={"id_list": arxiv_id},
+                headers={"Accept": "application/atom+xml"},
+            )
+            if response.status_code in {400, 404}:
+                return None
+            response.raise_for_status()
+        except httpx.HTTPError:
+            return None
         xml = response.text
         published = _xml_tag(xml, "published") or _xml_tag(xml, "updated")
         title = _xml_tag(xml, "title")

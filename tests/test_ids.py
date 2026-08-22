@@ -22,6 +22,14 @@ def test_normalize_doi():
 def test_normalize_pmid_and_arxiv():
     assert normalize_pmid("https://pubmed.ncbi.nlm.nih.gov/24926016/") == "24926016"
     assert normalize_arxiv_id("https://arxiv.org/abs/1406.1455v2") == "1406.1455"
+    assert normalize_arxiv_id("hep-th/9901001") == "hep-th/9901001"
+    assert normalize_arxiv_id("https://arxiv.org/abs/hep-th/9901001") == "hep-th/9901001"
+
+
+def test_arxiv_id_ignores_news_url_paths():
+    news = "http://www.forskning.no/Artikler/2005/desember/1135264557.29"
+    assert normalize_arxiv_id(news) is None
+    assert normalize_arxiv_id("desember/1135264") is None
 
 
 def test_earliest_publication_date():

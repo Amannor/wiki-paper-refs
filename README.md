@@ -17,25 +17,23 @@ Requires **Python 3.10+**. Talks to the Wikipedia API plus Crossref, PubMed, and
 
 ## Install
 
-From a clone (the GitHub repo is private, so you need access to `Amannor/wiki-paper-refs`):
+```bash
+pip install wiki-paper-refs
+```
+
+That installs the `wiki-paper-refs` command. Then:
+
+```bash
+wiki-paper-refs --help
+```
+
+From a clone (the GitHub repo is currently private):
 
 ```bash
 git clone https://github.com/Amannor/wiki-paper-refs.git
 cd wiki-paper-refs
 python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -e .
-```
-
-From GitHub without a local clone:
-
-```bash
-pip install "git+https://github.com/Amannor/wiki-paper-refs.git"
-```
-
-For tests and local development:
-
-```bash
 pip install -e ".[dev]"
 pytest
 ```
@@ -58,6 +56,8 @@ wiki-paper-refs --help
 | `--mailto` | Contact email for Crossref's polite pool (or set `CROSSREF_MAILTO`) |
 
 JSON is meant for piping into other tools. `--skip-history` is the right default while you iterate; full history walks every article's revisions and can take a long time on large pages.
+
+If the page has no academic paper citations, the command prints a message on stderr, writes an empty list, and exits with code `2`.
 
 ### Library usage
 
