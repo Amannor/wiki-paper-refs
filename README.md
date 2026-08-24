@@ -27,7 +27,7 @@ That installs the `wiki-paper-refs` command. Then:
 wiki-paper-refs --help
 ```
 
-From a clone (the GitHub repo is currently private):
+From a clone:
 
 ```bash
 git clone https://github.com/Amannor/wiki-paper-refs.git
